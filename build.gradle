@@ -1,0 +1,58 @@
+buildscript {
+    ext {
+        springBootVersion = '2.1.0.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        maven { url 'https://plugins.gradle.org/m2/' }
+        maven { url 'http://repo.spring.io/milestone'}
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Camden.RELEASE'
+    }
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+group 'com.ddingcham.event'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile 'org.springframework.cloud:spring-cloud-stream'
+    compile('org.springframework.cloud:spring-cloud-starter-stream-kafka')
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile "org.projectlombok:lombok:$lombokVersion"
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.2'
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.2"
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.8.2'
+    compile "org.liquibase:liquibase-core:$liquibaseVersion"
+    compile 'com.google.guava:guava:18.0'
+    compile "io.vavr:vavr:0.9.0"
+
+    runtime 'cglib:cglib-nodep:3.2.1'
+    runtime 'com.h2database:h2'
+
+    testCompile 'org.springframework.cloud:spring-cloud-stream-test-support-internal:1.1.0.RELEASE'
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.spockframework:spock-spring'
+    testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
+}
