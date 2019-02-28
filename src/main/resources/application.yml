@@ -1,0 +1,27 @@
+liquibase:
+  change-log: classpath:/db/changelog/changelog-master.xml
+
+spring:
+  jpa:
+    generate-ddl: false
+  cloud:
+    stream:
+      kafka:
+        binder:
+          auto-add-partitions: true
+      bindings:
+        output:
+          destination: items
+          content-type: application/json
+          producer:
+            partitionKeyExpression: headers['uuid']
+            partitionCount: 2
+        input:
+          destination: commands
+          content-type: application/json
+          group: shop
+
+
+
+server:
+  port: 9874

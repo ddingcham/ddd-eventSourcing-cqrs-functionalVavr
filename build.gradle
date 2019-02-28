@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.1.0.RELEASE'
+        springBootVersion = '1.4.0.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -15,7 +15,7 @@ buildscript {
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'groovy'
-apply plugin: 'org.springframework.boot'
+apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 
 dependencyManagement {
@@ -29,7 +29,6 @@ repositories {
     jcenter()
 }
 
-group 'com.ddingcham.event'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8

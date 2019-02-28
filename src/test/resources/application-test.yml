@@ -1,0 +1,5 @@
+liquibase:
+  change-log: classpath:db/changelog/changelog-master.xml
+spring:
+  jpa:
+    generate-ddl: false
