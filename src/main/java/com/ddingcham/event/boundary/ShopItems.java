@@ -9,7 +9,4 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class ShopItems {
 
-    public void log() {
-        log.debug("simple log");
-    }
 }

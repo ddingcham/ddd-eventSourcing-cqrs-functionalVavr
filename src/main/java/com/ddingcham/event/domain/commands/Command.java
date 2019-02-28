@@ -8,6 +8,9 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         include = JsonTypeInfo.As.PROPERTY,
         property = "type", defaultImpl = VoidCommand.class)
 @JsonSubTypes({
+        @JsonSubTypes.Type(name = "item.order", value = Order.class),
+        @JsonSubTypes.Type(name = "item.pay", value = Pay.class),
+        @JsonSubTypes.Type(name = "item.markPaymentTimeout", value = MarkPaymentTimeout.class)
 })
 public interface Command {
 }
