@@ -53,6 +53,6 @@ dependencies {
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support-internal:1.1.0.RELEASE'
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'org.spockframework:spock-spring'
+    testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
     testCompile 'org.springframework.cloud:spring-cloud-stream-test-support'
 }
