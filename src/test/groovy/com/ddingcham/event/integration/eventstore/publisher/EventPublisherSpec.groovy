@@ -3,6 +3,7 @@ package com.ddingcham.event.integration.eventstore.publisher
 import com.ddingcham.event.boundary.ShopItems
 import com.ddingcham.event.eventstore.EventDescriptor
 import com.ddingcham.event.eventstore.publisher.EventPublisher
+import com.ddingcham.event.eventstore.publisher.PendingEventFetcher
 import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.messaging.Source
