@@ -1,6 +1,7 @@
 package com.ddingcham.event.integration
 
 import com.ddingcham.event.domain.events.ItemOrdered
+import com.ddingcham.event.eventstore.publisher.EventPublisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.messaging.Sink
 import org.springframework.cloud.stream.messaging.Source
@@ -20,6 +21,7 @@ class E2ESpec extends IntegrationSpec {
     @Autowired Source source
     @Autowired Sink commands
     @Autowired MessageCollector eventsCollector
+    @Autowired EventPublisher eventPublisher
 
     BlockingQueue<Message<?>> events
     PollingConditions conditions = new PollingConditions(timeout: 12, initialDelay: 0, factor: 1)
