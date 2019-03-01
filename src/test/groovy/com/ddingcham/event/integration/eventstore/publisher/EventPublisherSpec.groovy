@@ -1,6 +1,7 @@
 package com.ddingcham.event.integration.eventstore.publisher
 
 import com.ddingcham.event.boundary.ShopItems
+import com.ddingcham.event.eventstore.EventDescriptor
 import com.ddingcham.event.eventstore.publisher.EventPublisher
 import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,6 +11,7 @@ import org.springframework.messaging.Message
 import spock.lang.Subject
 import spock.util.concurrent.PollingConditions
 
+import java.time.Instant
 import java.util.concurrent.BlockingQueue
 
 class EventPublisherSpec extends IntegrationSpec {
@@ -30,7 +32,7 @@ class EventPublisherSpec extends IntegrationSpec {
     BlockingQueue<Message<?>> channel
 
     def setup() {
-        condition = new PollingConditions(timeout: 12, initialDelay: 0, factor: 1)
+        conditions = new PollingConditions(timeout: 12, initialDelay: 0, factor: 1)
         channel = messageCollector.forChannel(source.output())
     }
 
@@ -40,7 +42,7 @@ class EventPublisherSpec extends IntegrationSpec {
         when:
             eventPublisher.publishPending()
         then:
-            condition.eventually {
+            conditions.eventually {
                 Message<String> received = channel.poll()
                 received != null
                 received.getPayload() == pendingEvent.getBody()
