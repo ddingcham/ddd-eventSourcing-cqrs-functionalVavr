@@ -35,7 +35,6 @@ class ShopItemSpec extends Specification {
             tryOrder.isSuccess()
             tryOrder.get().getUncommittedChanges().size() == 1
             tryOrder.get().getUncommittedChanges().head().type() == ItemOrdered.TYPE
-
     }
 
     def 'should calculate #deadline when ordering at #orderingAt and expiration in days #expiresIn'() {

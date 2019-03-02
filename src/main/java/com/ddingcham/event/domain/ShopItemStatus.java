@@ -1,5 +1,8 @@
 package com.ddingcham.event.domain;
 
 public enum ShopItemStatus {
-    INITIALIZED
+    INITIALIZED,
+    ORDERED,
+    PAID,
+    PAYMENT_MISSING
 }
