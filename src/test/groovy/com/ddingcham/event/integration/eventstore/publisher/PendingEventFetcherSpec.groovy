@@ -24,6 +24,18 @@ class PendingEventFetcherSpec extends IntegrationSpec {
             events.every {it.status == PENDING}
     }
 
+    def 'should fetch events in correct order'() {
+        given:
+            3.times { pendingEvent() }
+        when:
+            List<EventDescriptor> pendingEvents = pendingEventFetcher.listPending()
+        then:
+            pendingEvents.head().occurredAt.isBefore(pendingEvents.last().occurredAt)
+            pendingEvents.head().occurredAt.isBefore(pendingEvents.get(1).occurredAt)
+            pendingEvents.get(1).occurredAt.isBefore(pendingEvents.last().occurredAt)
+
+    }
+
 
     EventDescriptor pendingEvent() {
         EventDescriptor event = new EventDescriptor("body", Instant.now(), "type", UUID.randomUUID())
