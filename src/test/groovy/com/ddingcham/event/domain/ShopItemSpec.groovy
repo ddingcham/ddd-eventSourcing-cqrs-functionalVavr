@@ -6,8 +6,6 @@ import io.vavr.control.Try
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.Instant
-
 import static com.ddingcham.event.ShopItemFixture.initialized
 import static java.time.Instant.now
 import static java.time.Instant.parse
@@ -59,7 +57,14 @@ class ShopItemSpec extends Specification {
     }
 
     def 'Payment expiration date cannot be in the past'() {
-
+        given:
+            ShopItem initialized = initialized()
+        when:
+            Try<ShopItem> tryOrder =
+                    initialized.order(new OrderWithTimeout(uuid, ANY_PRICE, now(), -1))
+        then:
+            tryOrder.isFailure()
+            tryOrder.getCause().message.contains("Payment timeout day is before ordering date")
     }
 
     def 'ordering an item should be idempotent'() {
