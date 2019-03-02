@@ -6,8 +6,11 @@ import io.vavr.control.Try
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.time.Instant
+
 import static com.ddingcham.event.ShopItemFixture.initialized
 import static java.time.Instant.now
+import static java.time.Instant.parse
 
 /*
  * @Unroll
@@ -38,7 +41,21 @@ class ShopItemSpec extends Specification {
     }
 
     def 'should calculate #deadline when ordering at #orderingAt and expiration in days #expiresIn'() {
-
+        given:
+            ShopItem initialized = initialized()
+        when:
+            Try<ShopItem> tryOrder =
+                    initialized.order(new OrderWithTimeout(uuid, ANY_PRICE, parse(orderingAt), expiresInMunites))
+        then:
+            tryOrder.isSuccess()
+            ((ItemOrdered) tryOrder.get().getUncommittedChanges().head()).paymentTimeoutDate == parse(deadline)
+        where:
+            orderingAt             | expiresInMunites || deadline
+            "1995-10-23T10:12:35Z" | 0                || "1995-10-23T10:12:35Z"
+            "1995-10-23T10:12:35Z" | 1                || "1995-10-23T10:13:35Z"
+            "1995-10-23T10:12:35Z" | 2                || "1995-10-23T10:14:35Z"
+            "1995-10-23T10:12:35Z" | 20               || "1995-10-23T10:32:35Z"
+            "1995-10-23T10:12:35Z" | 24               || "1995-10-23T10:36:35Z"
     }
 
     def 'Payment expiration date cannot be in the past'() {
