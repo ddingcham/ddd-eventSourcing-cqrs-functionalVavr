@@ -1,7 +1,13 @@
 package com.ddingcham.event.domain
 
+import com.ddingcham.event.domain.commands.OrderWithTimeout
+import com.ddingcham.event.domain.events.ItemOrdered
+import io.vavr.control.Try
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import static com.ddingcham.event.ShopItemFixture.initialized
+import static java.time.Instant.now
 
 /*
  * @Unroll
@@ -14,7 +20,21 @@ import spock.lang.Unroll
 @Unroll
 class ShopItemSpec extends Specification {
 
+    private static final int PAYMENT_DEADLINE_IN_HOURS = 48
+    private static final BigDecimal ANY_PRICE = BigDecimal.TEN
+    private final UUID uuid = UUID.randomUUID()
+
+
     def 'should emit item ordered event when ordering initialized item'() {
+        given:
+            ShopItem initialized = initialized()
+        when:
+            Try<ShopItem> tryOrder =
+                    initialized.order(new OrderWithTimeout(uuid, ANY_PRICE, now(), PAYMENT_DEADLINE_IN_HOURS))
+        then:
+            tryOrder.isSuccess()
+            tryOrder.get().getUncommittedChanges().size() == 1
+            tryOrder.get().getUncommittedChanges().head().type() == ItemOrdered.TYPE
 
     }
 

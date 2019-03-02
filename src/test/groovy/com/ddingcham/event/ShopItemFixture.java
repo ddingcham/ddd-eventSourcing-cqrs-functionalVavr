@@ -1,6 +1,8 @@
 package com.ddingcham.event;
 
 import com.ddingcham.event.domain.ShopItem;
+import com.ddingcham.event.domain.ShopItemStatus;
+import com.google.common.collect.ImmutableList;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -16,7 +18,7 @@ public class ShopItemFixture {
 
 
     public static ShopItem initialized() {
-        return null;
+        return new ShopItem(null, ImmutableList.of(), ShopItemStatus.INITIALIZED);
     }
 
     public static ShopItem ordered(UUID uuid) {
