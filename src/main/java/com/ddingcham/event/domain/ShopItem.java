@@ -138,4 +138,8 @@ public class ShopItem {
     public ImmutableList<DomainEvent> getUncommittedChanges() {
         return changes;
     }
+
+    public ShopItem markChangesAsCommitted() {
+        return this.withChanges(ImmutableList.of());
+    }
 }

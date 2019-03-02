@@ -2,6 +2,7 @@ package com.ddingcham.event;
 
 import com.ddingcham.event.domain.ShopItem;
 import com.ddingcham.event.domain.ShopItemStatus;
+import com.ddingcham.event.domain.commands.OrderWithTimeout;
 import com.google.common.collect.ImmutableList;
 
 import java.math.BigDecimal;
@@ -22,7 +23,9 @@ public class ShopItemFixture {
     }
 
     public static ShopItem ordered(UUID uuid) {
-        return null;
+        return initialized()
+                .order(new OrderWithTimeout(uuid, ANY_PRICE, ANY_TIME, ANY_NUMBER_OF_HOURS_TO_PAYMENT_TIMEOUT)).get()
+                .markChangesAsCommitted();
     }
 
     public static ShopItem paid(UUID uuid) {

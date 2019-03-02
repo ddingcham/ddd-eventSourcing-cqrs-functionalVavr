@@ -7,6 +7,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 
 import static com.ddingcham.event.ShopItemFixture.initialized
+import static com.ddingcham.event.ShopItemFixture.ordered
 import static java.time.Instant.now
 import static java.time.Instant.parse
 
@@ -68,7 +69,13 @@ class ShopItemSpec extends Specification {
     }
 
     def 'ordering an item should be idempotent'() {
-
+        given:
+            ShopItem ordered = ordered(uuid)
+        when:
+            Try<ShopItem> tryOrder = ordered.order(new OrderWithTimeout(uuid, ANY_PRICE, now(), PAYMENT_DEADLINE_IN_HOURS))
+        then:
+            tryOrder.isSuccess()
+            tryOrder.get().getUncommittedChanges().isEmpty()
     }
 
     def 'cannot pay for just initialized item'() {
