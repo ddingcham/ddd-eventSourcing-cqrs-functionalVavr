@@ -3,6 +3,7 @@ package com.ddingcham.event.integration.eventstore
 import com.ddingcham.event.boundary.ShopItems
 import com.ddingcham.event.domain.events.ItemOrdered
 import com.ddingcham.event.eventstore.EventStore
+import com.ddingcham.event.eventstore.EventStream
 import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
