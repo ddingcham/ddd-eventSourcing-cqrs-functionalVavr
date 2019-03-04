@@ -88,9 +88,10 @@ class EventStoreIntegrationSpec extends IntegrationSpec {
 
     def 'paying should be idempotent - should store only 1 event'() {
         given:
+            Order order = orderItemCommand(uuid)
             Pay firstPay = payItemCommand(uuid)
         when:
-            shopItems.order(orderItemCommand(uuid))
+            shopItems.order(order)
             shopItems.pay(firstPay)
             shopItems.pay(payItemCommand(uuid))
         then:
