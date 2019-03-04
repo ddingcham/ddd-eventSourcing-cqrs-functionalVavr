@@ -70,10 +70,12 @@ public class ShopItem {
     public Try<ShopItem> markTimeout(MarkPaymentTimeout command) {
         return Try.of(() -> {
             throwIfStateIs(INITIALIZED, "Payment is not missing yet");
+            throwIfStateIs(PAID, "Item already paid");
             if (status == ORDERED) {
                 return appendChange.apply(this, markTimeout.apply(this, command));
+            } else {
+                return noOp.apply(this);
             }
-            return null;
         });
 
     }

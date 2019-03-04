@@ -138,10 +138,21 @@ class ShopItemSpec extends Specification {
     }
 
     def 'marking payment timeout should be idempotent'() {
+        when:
+            Try<ShopItem> tryMark = withTimeout(uuid).markTimeout(new MarkPaymentTimeout(uuid, now()))
+        then:
+            tryMark.isSuccess()
+            tryMark.get().getUncommittedChanges().isEmpty()
 
     }
 
     def 'cannot mark payment missing when item already paid'() {
+        given:
+            ShopItem paid = paid(uuid)
+        when:
+            Try<ShopItem> tryMarkTimeout = paid.markTimeout(new MarkPaymentTimeout(uuid, now()))
+        then:
+            tryMarkTimeout.isFailure()
 
     }
 
