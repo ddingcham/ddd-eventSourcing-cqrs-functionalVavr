@@ -1,6 +1,7 @@
 package com.ddingcham.event.eventstore;
 
 import com.ddingcham.event.domain.events.DomainEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -25,6 +26,20 @@ public class EventSerializer {
         try {
             return objectMapper.readValue(eventDescriptor.getBody(), DomainEvent.class);
         } catch (IOException e) {
+            throw new UnSupportedSerializableEventException(e);
+        }
+    }
+
+    EventDescriptor serialize(DomainEvent event) {
+        try {
+            return EventDescriptor
+                    .builder()
+                    .body(objectMapper.writeValueAsString(event))
+                    .occurredAt(event.when())
+                    .type(event.type())
+                    .aggregateUUID(event.aggregateUuid())
+                    .build();
+        } catch (JsonProcessingException e) {
             throw new UnSupportedSerializableEventException(e);
         }
     }

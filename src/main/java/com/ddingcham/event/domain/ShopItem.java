@@ -18,11 +18,13 @@ import lombok.experimental.Wither;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 import static com.ddingcham.event.domain.ShopItemStatus.*;
 import static io.vavr.API.*;
 import static io.vavr.Predicates.instanceOf;
+import static io.vavr.collection.List.ofAll;
 
 /*
  * @Wither
@@ -147,6 +149,19 @@ public class ShopItem {
 
     /*
         Rebuilding aggregate with left fold and pattern match
+     */
+    public static ShopItem rebuild(UUID uuid, List<DomainEvent> history) {
+        return ofAll(history)
+                .foldLeft(
+                        initialState(uuid),
+                        ShopItem::patternMatch);
+    }
+
+    private static ShopItem initialState(UUID uuid) {
+        return new ShopItem(uuid, ImmutableList.of(), INITIALIZED);
+    }
+
+    /*
         $ 형태 API는 왜 만든건지 ... 버전 확인을 했어야 하나 ㅡㅡ 2년전 예제 $ 없는 코드가 더 나은 듯
      */
     private ShopItem patternMatch(DomainEvent event) {

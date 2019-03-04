@@ -1,6 +1,7 @@
 package com.ddingcham.event.eventstore;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,6 +46,7 @@ public class EventDescriptor {
     @Getter
     private UUID aggregateUUID;
 
+    @Builder
     EventDescriptor(String body, Instant occurredAt, String type, UUID aggregateUUID) {
         this.body = body;
         this.occurredAt = occurredAt;
