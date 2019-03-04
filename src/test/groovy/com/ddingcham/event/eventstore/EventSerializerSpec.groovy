@@ -1,6 +1,8 @@
 package com.ddingcham.event.eventstore
 
 import com.ddingcham.event.domain.events.ItemOrdered
+import com.ddingcham.event.domain.events.ItemPaid
+import com.ddingcham.event.domain.events.ItemPaymentTimeout
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -16,11 +18,11 @@ class EventSerializerSpec extends Specification {
     def "should parse ItemOrdered event"() {
         given:
             String body = """{
-                "type": "$ItemOrdered.TYPE",
-                "uuid": "${ANY_UUID.toString()}",
-                "when": "2016-05-24T12:06:41.045Z",
-                "price": "123.45"
-            }"""
+                    "type": "$ItemOrdered.TYPE",
+                    "uuid": "${ANY_UUID.toString()}",
+                    "when": "2016-05-24T12:06:41.045Z",
+                    "price": "123.45"
+                }"""
         when:
             ItemOrdered event = eventSerializer.deserialize(new EventDescriptor(body, now(), ANY_TYPE, ANY_UUID))
         then:
@@ -30,10 +32,30 @@ class EventSerializerSpec extends Specification {
     }
 
     def "should parse ItemPaid event"() {
+        given:
+            String body = """{
+                    "type": "$ItemPaid.TYPE",
+                    "uuid": "${ANY_UUID.toString()}",
+                    "when": "2016-05-24T12:06:41.045Z"
+                }"""
+        when:
+            ItemPaid event = eventSerializer.deserialize(new EventDescriptor(body, now(), ANY_TYPE, ANY_UUID))
+        then:
+            event.uuid == ANY_UUID
 
     }
 
     def "should parse ItemPaymentTimeout event"() {
+        given:
+            String body = """{
+                    "type": "$ItemPaymentTimeout.TYPE",
+                    "uuid": "${ANY_UUID.toString()}",
+                    "when": "2016-05-24T12:06:41.045Z"
+                }"""
+        when:
+            ItemPaymentTimeout event = eventSerializer.deserialize(new EventDescriptor(body, now(), ANY_TYPE, ANY_UUID))
+        then:
+            event.uuid == ANY_UUID
 
     }
 }

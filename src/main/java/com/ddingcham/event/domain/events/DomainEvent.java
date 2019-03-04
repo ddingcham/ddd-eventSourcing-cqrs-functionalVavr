@@ -12,6 +12,8 @@ import java.util.UUID;
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(name = ItemOrdered.TYPE, value = ItemOrdered.class),
+        @JsonSubTypes.Type(name = ItemPaymentTimeout.TYPE, value = ItemPaymentTimeout.class),
+        @JsonSubTypes.Type(name = ItemPaid.TYPE, value = ItemPaid.class)
 })
 public interface DomainEvent {
 
