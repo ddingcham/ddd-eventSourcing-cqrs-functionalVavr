@@ -87,6 +87,18 @@ class EventStoreIntegrationSpec extends IntegrationSpec {
     }
 
     def 'paying should be idempotent - should store only 1 event'() {
+        given:
+            Pay firstPay = payItemCommand(uuid)
+        when:
+            shopItems.order(orderItemCommand(uuid))
+            shopItems.pay(firstPay)
+            shopItems.pay(payItemCommand(uuid))
+        then:
+            Optional<EventStream> eventStream = eventStore.findByAggregateUUID(uuid)
+            eventStream.isPresent()
+            eventStream.get().getEvents()*.type == [ItemOrdered.TYPE, ItemPaid.TYPE]
+            // 같은 aggregateId를 갖는 Pay 이벤트에 대해서는 기록하지 않음
+            eventStream.get().getEvents().get(1).getOccurredAt() == firstPay.when
 
     }
 }
