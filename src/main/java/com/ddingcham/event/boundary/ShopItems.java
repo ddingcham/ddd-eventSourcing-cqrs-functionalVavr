@@ -4,6 +4,7 @@ import com.ddingcham.event.domain.ShopItem;
 import com.ddingcham.event.domain.ShopItemRepository;
 import com.ddingcham.event.domain.commands.Order;
 import com.ddingcham.event.domain.commands.OrderWithTimeout;
+import com.ddingcham.event.domain.commands.Pay;
 import io.vavr.Function1;
 import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,11 @@ public class ShopItems {
         withItem(command.getUuid(),
                 item -> item.order(orderWithTimeout));
         log.info("{}, item ordered at {}", command.getUuid(), command.getWhen());
+    }
+
+    public void pay(Pay command) {
+        withItem(command.getUuid(), item -> item.pay(command));
+        log.info("{} item paid at {}", command.getUuid(), command.getWhen());
     }
 
     public ShopItem getByUUID(UUID uuid) {
