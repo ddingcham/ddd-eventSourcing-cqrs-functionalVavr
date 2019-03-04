@@ -1,7 +1,9 @@
 package com.ddingcham.event.integration.eventstore
 
 import com.ddingcham.event.boundary.ShopItems
+import com.ddingcham.event.domain.commands.MarkPaymentTimeout
 import com.ddingcham.event.domain.commands.Order
+import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.domain.events.ItemOrdered
 import com.ddingcham.event.domain.events.ItemPaid
 import com.ddingcham.event.domain.events.ItemPaymentTimeout
@@ -70,7 +72,18 @@ class EventStoreIntegrationSpec extends IntegrationSpec {
     }
 
     def 'marking payment as missing should be idempotent - should store only 1 event'() {
-
+        given:
+            MarkPaymentTimeout firstTimeOut = markPaymentTimeoutCommand(uuid)
+        when:
+            shopItems.order(orderItemCommand(uuid))
+            shopItems.markPaymentTimeout(firstTimeOut)
+            shopItems.markPaymentTimeout(markPaymentTimeoutCommand(uuid))
+        then:
+            Optional<EventStream> eventStream = eventStore.findByAggregateUUID(uuid)
+            eventStream.isPresent()
+            eventStream.get().getEvents()*.type == [ItemOrdered.TYPE, ItemPaymentTimeout.TYPE]
+            // 같은 aggregateId를 갖는 MarkPaymentTimeout 이벤트에 대해서는 기록하지 않음
+            eventStream.get().getEvents().get(1).getOccurredAt() == firstTimeOut.when
     }
 
     def 'paying should be idempotent - should store only 1 event'() {
