@@ -14,6 +14,7 @@ import static com.ddingcham.event.ShopItemFixture.initialized
 import static com.ddingcham.event.ShopItemFixture.ordered
 import static com.ddingcham.event.ShopItemFixture.paid
 import static com.ddingcham.event.ShopItemFixture.withTimeout
+import static com.ddingcham.event.ShopItemFixture.withTimeoutAndPaid
 import static java.time.Instant.now
 import static java.time.Instant.parse
 
@@ -157,10 +158,22 @@ class ShopItemSpec extends Specification {
     }
 
     def 'should emit item paid event when receiving missed payment'() {
+        when:
+            Try<ShopItem> tryPay = withTimeout(uuid).pay(new Pay(uuid, now()))
+        then:
+            tryPay.isSuccess()
+            tryPay.get().getUncommittedChanges().size() == 1
+            tryPay.get().getUncommittedChanges().head().type() == ItemPaid.TYPE
 
     }
 
     def 'receiving payment after timeout should be idempotent'() {
-
+        given:
+            ShopItem paidAfterTimeout = withTimeoutAndPaid(uuid)
+        when:
+            Try<ShopItem> tryPay = paidAfterTimeout.pay(new Pay(uuid, now()))
+        then:
+            tryPay.isSuccess()
+            tryPay.get().getUncommittedChanges().isEmpty()
     }
 }

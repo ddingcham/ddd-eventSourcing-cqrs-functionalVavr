@@ -45,6 +45,10 @@ public class ShopItemFixture {
     }
 
     public static ShopItem withTimeoutAndPaid(UUID uuid) {
-        return null;
+        return initialized()
+                .order(new OrderWithTimeout(uuid, ANY_PRICE, now(), ANY_NUMBER_OF_HOURS_TO_PAYMENT_TIMEOUT)).get()
+                .markTimeout(new MarkPaymentTimeout(uuid, now())).get()
+                .pay(new Pay(uuid, now())).get()
+                .markChangesAsCommitted();
     }
 }
