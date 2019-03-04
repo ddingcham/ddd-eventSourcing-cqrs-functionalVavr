@@ -1,6 +1,7 @@
 package com.ddingcham.event.domain;
 
 import com.ddingcham.event.domain.commands.OrderWithTimeout;
+import com.ddingcham.event.domain.commands.Pay;
 import com.ddingcham.event.domain.events.DomainEvent;
 import com.ddingcham.event.domain.events.ItemOrdered;
 import com.ddingcham.event.domain.events.ItemPaid;
@@ -52,6 +53,19 @@ public class ShopItem {
                 return noOp.apply(this);
             }
         });
+    }
+
+    public Try<ShopItem> pay(Pay command) {
+        return Try.of(() -> {
+            throwIfStateIs(ShopItemStatus.INITIALIZED, "Payment is not missing yet");
+            return null;
+        });
+    }
+
+    private void throwIfStateIs(ShopItemStatus unexpectedState, String msg) {
+        if (status == unexpectedState) {
+            throw new IllegalStateException(msg + (" UUID: " + uuid));
+        }
     }
 
     private Instant calculatePaymentTimeoutDate(Instant boughtAt, int hoursToPaymentTimeout) {

@@ -1,6 +1,7 @@
 package com.ddingcham.event.domain
 
 import com.ddingcham.event.domain.commands.OrderWithTimeout
+import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.domain.events.ItemOrdered
 import io.vavr.control.Try
 import spock.lang.Specification
@@ -79,6 +80,12 @@ class ShopItemSpec extends Specification {
     }
 
     def 'cannot pay for just initialized item'() {
+        given:
+            ShopItem initialized = initialized()
+        when:
+            Try<ShopItem> tryPay = initialized.pay(new Pay(uuid, now()))
+        then:
+            tryPay.isFailure()
 
     }
 
