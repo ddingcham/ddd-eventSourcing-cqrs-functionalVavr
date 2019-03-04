@@ -60,9 +60,10 @@ public class ShopItem {
         return Try.of(() -> {
             throwIfStateIs(ShopItemStatus.INITIALIZED, "Cannot pay for not ordered item");
             if (status != PAID) {
-                return  appendChange.apply(this, pay.apply(this, command));
+                return appendChange.apply(this, pay.apply(this, command));
+            } else {
+                return noOp.apply(this);
             }
-            return null;
         });
     }
 

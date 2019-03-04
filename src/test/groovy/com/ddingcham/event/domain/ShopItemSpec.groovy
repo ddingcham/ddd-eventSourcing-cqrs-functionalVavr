@@ -11,6 +11,7 @@ import spock.lang.Unroll
 
 import static com.ddingcham.event.ShopItemFixture.initialized
 import static com.ddingcham.event.ShopItemFixture.ordered
+import static com.ddingcham.event.ShopItemFixture.paid
 import static java.time.Instant.now
 import static java.time.Instant.parse
 
@@ -113,6 +114,13 @@ class ShopItemSpec extends Specification {
     }
 
     def 'paying for an item should be idempotent'() {
+        given:
+            ShopItem paid = paid(uuid)
+        when:
+            Try<ShopItem> tryPay = paid.pay(new Pay(uuid, now()))
+        then:
+            tryPay.isSuccess()
+            tryPay.get().getUncommittedChanges().isEmpty()
 
     }
 
