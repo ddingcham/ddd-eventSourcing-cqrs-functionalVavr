@@ -43,7 +43,12 @@ public class EventSourcedShopItemRepository implements ShopItemRepository {
 
     @Override
     public ShopItem findByUUIDat(UUID uuid, Instant at) {
-        return null;
+        return ShopItem
+                .rebuild(uuid,
+                        getRelatedEvents(uuid)
+                                .stream()
+                                .filter(event -> !event.when().isAfter(at))
+                                .collect(toList()));
     }
 
     private List<DomainEvent> getRelatedEvents(UUID uuid) {

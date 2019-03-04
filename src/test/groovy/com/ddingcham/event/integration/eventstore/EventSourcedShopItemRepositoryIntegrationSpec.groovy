@@ -2,7 +2,9 @@ package com.ddingcham.event.integration.eventstore
 
 import com.ddingcham.event.domain.ShopItem
 import com.ddingcham.event.domain.ShopItemRepository
+import com.ddingcham.event.domain.ShopItemStatus
 import com.ddingcham.event.domain.commands.OrderWithTimeout
+import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
@@ -53,7 +55,21 @@ class EventSourcedShopItemRepositoryIntegrationSpec extends IntegrationSpec {
         then: ShopItem events(uuid) forEach validate event.Status
      */
     def 'should reconstruct item at given moment'() {
-
+        given:
+            ShopItem stored =
+                    initialized()
+                            .order(new OrderWithTimeout(uuid, ANY_PRICE, TOMORROW, PAYMENT_DEADLINE_IN_HOURS))
+                            .get()
+                            .pay(new Pay(uuid, DAY_AFTER_TOMORROW))
+                            .get()
+        when:
+            shopItemRepository.save(stored)
+        and:
+            ShopItem bought = shopItemRepository.findByUUIDat(uuid, TOMORROW)
+            ShopItem paid = shopItemRepository.findByUUIDat(uuid, DAY_AFTER_TOMORROW)
+        then:
+            bought.status == ShopItemStatus.ORDERED
+            paid.status == ShopItemStatus.PAID
     }
 
 }
