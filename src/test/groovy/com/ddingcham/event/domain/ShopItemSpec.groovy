@@ -1,5 +1,6 @@
 package com.ddingcham.event.domain
 
+import com.ddingcham.event.domain.commands.MarkPaymentTimeout
 import com.ddingcham.event.domain.commands.OrderWithTimeout
 import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.domain.events.ItemOrdered
@@ -90,6 +91,12 @@ class ShopItemSpec extends Specification {
     }
 
     def 'cannot mark payment timeout when item just initialized'() {
+        given:
+            ShopItem item = initialized()
+        when:
+            Try<ShopItem> tryMark = item.markTimeout(new MarkPaymentTimeout(uuid, now()))
+        then:
+            tryMark.isFailure()
 
     }
 

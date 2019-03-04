@@ -1,5 +1,6 @@
 package com.ddingcham.event.domain;
 
+import com.ddingcham.event.domain.commands.MarkPaymentTimeout;
 import com.ddingcham.event.domain.commands.OrderWithTimeout;
 import com.ddingcham.event.domain.commands.Pay;
 import com.ddingcham.event.domain.events.DomainEvent;
@@ -57,9 +58,17 @@ public class ShopItem {
 
     public Try<ShopItem> pay(Pay command) {
         return Try.of(() -> {
-            throwIfStateIs(ShopItemStatus.INITIALIZED, "Payment is not missing yet");
+            throwIfStateIs(ShopItemStatus.INITIALIZED, "Cannot pay for not ordered item");
             return null;
         });
+    }
+
+    public Try<ShopItem> markTimeout(MarkPaymentTimeout command) {
+        return Try.of(() -> {
+            throwIfStateIs(INITIALIZED, "Payment is not missing yet");
+            return null;
+        });
+
     }
 
     private void throwIfStateIs(ShopItemStatus unexpectedState, String msg) {
