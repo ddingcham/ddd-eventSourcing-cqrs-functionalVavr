@@ -70,6 +70,9 @@ public class ShopItem {
     public Try<ShopItem> markTimeout(MarkPaymentTimeout command) {
         return Try.of(() -> {
             throwIfStateIs(INITIALIZED, "Payment is not missing yet");
+            if (status == ORDERED) {
+                return appendChange.apply(this, markTimeout.apply(this, command));
+            }
             return null;
         });
 
@@ -133,6 +136,9 @@ public class ShopItem {
                             command.getWhen(),
                             state.calculatePaymentTimeoutDate(command.getWhen(), command.getHoursToPaymentTimeout()),
                             command.getPrice());
+
+    private static final Function2<ShopItem, MarkPaymentTimeout, DomainEvent> markTimeout =
+            (state, command) -> new ItemPaymentTimeout(state.uuid, command.getWhen());
 
     private static final Function1<ShopItem, ShopItem> noOp =
             (state) -> state;

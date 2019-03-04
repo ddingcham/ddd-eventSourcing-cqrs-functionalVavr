@@ -15,19 +15,20 @@ public class ItemPaymentTimeout implements DomainEvent {
     public static final String TYPE = "item.payment.timeout";
 
     private UUID uuid;
+    private Instant when;
 
     @Override
     public String type() {
-        return null;
+        return TYPE;
     }
 
     @Override
     public Instant when() {
-        return null;
+        return when;
     }
 
     @Override
     public UUID aggregateUuid() {
-        return null;
+        return uuid;
     }
 }

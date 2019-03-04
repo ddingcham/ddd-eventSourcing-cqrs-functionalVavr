@@ -5,6 +5,7 @@ import com.ddingcham.event.domain.commands.OrderWithTimeout
 import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.domain.events.ItemOrdered
 import com.ddingcham.event.domain.events.ItemPaid
+import com.ddingcham.event.domain.events.ItemPaymentTimeout
 import io.vavr.control.Try
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -12,6 +13,7 @@ import spock.lang.Unroll
 import static com.ddingcham.event.ShopItemFixture.initialized
 import static com.ddingcham.event.ShopItemFixture.ordered
 import static com.ddingcham.event.ShopItemFixture.paid
+import static com.ddingcham.event.ShopItemFixture.withTimeout
 import static java.time.Instant.now
 import static java.time.Instant.parse
 
@@ -125,7 +127,14 @@ class ShopItemSpec extends Specification {
     }
 
     def 'should emit payment timeout event when marking items as payment missing'() {
-
+        given:
+            ShopItem ordered = ordered(uuid)
+        when:
+            Try<ShopItem> tryMark = ordered.markTimeout(new MarkPaymentTimeout(uuid, now()))
+        then:
+            tryMark.isSuccess()
+            tryMark.get().getUncommittedChanges().size() == 1
+            tryMark.get().getUncommittedChanges().head().type() == ItemPaymentTimeout.TYPE
     }
 
     def 'marking payment timeout should be idempotent'() {
