@@ -59,6 +59,9 @@ public class ShopItem {
     public Try<ShopItem> pay(Pay command) {
         return Try.of(() -> {
             throwIfStateIs(ShopItemStatus.INITIALIZED, "Cannot pay for not ordered item");
+            if (status != PAID) {
+                return  appendChange.apply(this, pay.apply(this, command));
+            }
             return null;
         });
     }
@@ -118,6 +121,10 @@ public class ShopItem {
         Behaviour transitions -> Can fail or return new events
         f(state, command) -> events
      */
+    private static final Function2<ShopItem, Pay, DomainEvent> pay =
+            (state, command) ->
+                    new ItemPaid(state.uuid, command.getWhen());
+
     private static final Function2<ShopItem, OrderWithTimeout, DomainEvent> order =
             (state, command) ->
                     new ItemOrdered(

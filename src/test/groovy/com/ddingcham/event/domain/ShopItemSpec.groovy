@@ -4,6 +4,7 @@ import com.ddingcham.event.domain.commands.MarkPaymentTimeout
 import com.ddingcham.event.domain.commands.OrderWithTimeout
 import com.ddingcham.event.domain.commands.Pay
 import com.ddingcham.event.domain.events.ItemOrdered
+import com.ddingcham.event.domain.events.ItemPaid
 import io.vavr.control.Try
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -101,7 +102,14 @@ class ShopItemSpec extends Specification {
     }
 
     def 'should emit item paid event when paying for ordered item'() {
-
+        given:
+            ShopItem ordered = ordered(uuid)
+        when:
+            Try<ShopItem> tryPay = ordered.pay(new Pay(uuid, now()))
+        then:
+            tryPay.isSuccess()
+            tryPay.get().getUncommittedChanges().size() == 1
+            tryPay.get().getUncommittedChanges().head().type() == ItemPaid.TYPE
     }
 
     def 'paying for an item should be idempotent'() {
