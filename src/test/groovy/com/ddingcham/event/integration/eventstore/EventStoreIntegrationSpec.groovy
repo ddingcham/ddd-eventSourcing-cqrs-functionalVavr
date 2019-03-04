@@ -3,12 +3,14 @@ package com.ddingcham.event.integration.eventstore
 import com.ddingcham.event.boundary.ShopItems
 import com.ddingcham.event.domain.events.ItemOrdered
 import com.ddingcham.event.domain.events.ItemPaid
+import com.ddingcham.event.domain.events.ItemPaymentTimeout
 import com.ddingcham.event.eventstore.EventStore
 import com.ddingcham.event.eventstore.EventStream
 import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
 
+import static com.ddingcham.event.CommandFixture.markPaymentTimeoutCommand
 import static com.ddingcham.event.CommandFixture.orderItemCommand
 import static com.ddingcham.event.CommandFixture.payItemCommand
 
@@ -41,6 +43,14 @@ class EventStoreIntegrationSpec extends IntegrationSpec {
     }
 
     def 'should store item paid event when receiving missed payment'() {
+        when:
+            shopItems.order(orderItemCommand(uuid))
+            shopItems.markPaymentTimeout(markPaymentTimeoutCommand(uuid))
+            shopItems.pay(payItemCommand(uuid))
+        then:
+            Optional<EventStream> eventStream = eventStore.findByAggregateUUID(uuid)
+            eventStream.isPresent()
+            eventStream.get().getEvents()*.type == [ItemOrdered.TYPE, ItemPaymentTimeout.TYPE, ItemPaid.TYPE]
 
     }
 

@@ -1,5 +1,6 @@
 package com.ddingcham.event;
 
+import com.ddingcham.event.domain.commands.MarkPaymentTimeout;
 import com.ddingcham.event.domain.commands.Order;
 import com.ddingcham.event.domain.commands.Pay;
 
@@ -16,5 +17,9 @@ public class CommandFixture {
 
     public static Pay payItemCommand(UUID uuid) {
         return new Pay(uuid, now());
+    }
+
+    public static MarkPaymentTimeout markPaymentTimeoutCommand(UUID uuid) {
+        return new MarkPaymentTimeout(uuid, now());
     }
 }

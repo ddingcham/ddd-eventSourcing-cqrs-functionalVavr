@@ -2,6 +2,7 @@ package com.ddingcham.event.boundary;
 
 import com.ddingcham.event.domain.ShopItem;
 import com.ddingcham.event.domain.ShopItemRepository;
+import com.ddingcham.event.domain.commands.MarkPaymentTimeout;
 import com.ddingcham.event.domain.commands.Order;
 import com.ddingcham.event.domain.commands.OrderWithTimeout;
 import com.ddingcham.event.domain.commands.Pay;
@@ -47,6 +48,11 @@ public class ShopItems {
     public void pay(Pay command) {
         withItem(command.getUuid(), item -> item.pay(command));
         log.info("{} item paid at {}", command.getUuid(), command.getWhen());
+    }
+
+    public void markPaymentTimeout(MarkPaymentTimeout command) {
+        withItem(command.getUuid(), item -> item.markTimeout(command));
+        log.info("{} item marked as payment timeout at {}", command.getUuid(), command.getWhen());
     }
 
     public ShopItem getByUUID(UUID uuid) {
