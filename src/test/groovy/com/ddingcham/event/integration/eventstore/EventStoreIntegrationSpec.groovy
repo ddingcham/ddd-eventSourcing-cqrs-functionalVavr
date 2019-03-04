@@ -8,6 +8,8 @@ import com.ddingcham.event.integration.IntegrationSpec
 import org.springframework.beans.factory.annotation.Autowired
 import spock.lang.Subject
 
+import static com.ddingcham.event.CommandFixture.orderItemCommand
+
 class EventStoreIntegrationSpec extends IntegrationSpec {
 
     private final UUID uuid = UUID.randomUUID()
@@ -22,7 +24,7 @@ class EventStoreIntegrationSpec extends IntegrationSpec {
         then:
             Optional<EventStream> eventStream = eventStore.findByAggregateUUID(uuid)
             eventStream.isPresent()
-            eventStream.get().getEvents()*.type == [ItemOrdered.TYPE, ItemPaid.TYPE]
+            eventStream.get().getEvents()*.type == [ItemOrdered.TYPE]
     }
 
     def 'should store item paid event when paying for existing item'() {
