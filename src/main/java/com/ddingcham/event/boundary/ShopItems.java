@@ -63,7 +63,7 @@ public class ShopItems {
         final ShopItem item = getByUUID(uuid);
         final ShopItem modified = action
                 .apply(item)
-                .getOrElseThrow(throwable -> new IllegalArgumentException(throwable));
+                .getOrElseThrow(throwable -> new IllegalStateException(throwable));
         return itemRepository.save(modified);
 
     }
