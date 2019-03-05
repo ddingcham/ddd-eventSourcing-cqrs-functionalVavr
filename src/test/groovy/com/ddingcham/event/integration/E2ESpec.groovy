@@ -1,6 +1,8 @@
 package com.ddingcham.event.integration
 
 import com.ddingcham.event.domain.events.ItemOrdered
+import com.ddingcham.event.domain.events.ItemPaid
+import com.ddingcham.event.domain.events.ItemPaymentTimeout
 import com.ddingcham.event.eventstore.publisher.EventPublisher
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.stream.messaging.Sink
@@ -40,6 +42,36 @@ class E2ESpec extends IntegrationSpec {
             }
     }
 
+    def 'received pay command should result in emitted item paid event'() {
+        when:
+            commands.input().send(new GenericMessage<>(sampleOrderInJson(ANY_UUID)))
+        and:
+            commands.input().send(new GenericMessage<>(samplePayInJson(ANY_UUID)))
+        then:
+            conditions.eventually {
+                expectedMessageThatContains(ItemOrdered.TYPE)
+            }
+        and:
+            conditions.eventually {
+                expectedMessageThatContains(ItemPaid.TYPE)
+            }
+    }
+
+    def 'received mark missing payment command should result in emitted marked as missed event'() {
+        when:
+            commands.input().send(new GenericMessage<>(sampleOrderInJson(ANY_UUID)))
+        and:
+            commands.input().send(new GenericMessage<>(sampleMarkTimeoutInJson(ANY_UUID)))
+        then:
+            conditions.eventually {
+                expectedMessageThatContains(ItemOrdered.TYPE)
+            }
+        and:
+            conditions.eventually {
+                expectedMessageThatContains(ItemPaymentTimeout.TYPE)
+            }
+    }
+
 
     void expectedMessageThatContains(String text) {
         Message<String> msg = events.poll()
@@ -53,4 +85,11 @@ class E2ESpec extends IntegrationSpec {
         return "{\"type\":\"item.order\",\"uuid\":\"$uuid\",\"when\":\"2019-02-28T10:28:23.956Z\"}"
     }
 
+    private static String samplePayInJson(UUID uuid) {
+        return "{\"type\":\"item.pay\",\"uuid\":\"$uuid\",\"when\":\"2016-10-06T10:29:23.956Z\"}"
+    }
+
+    private static String sampleMarkTimeoutInJson(UUID uuid) {
+        return "{\"type\":\"item.markPaymentTimeout\",\"uuid\":\"$uuid\",\"when\":\"2016-10-06T10:29:23.956Z\"}"
+    }
 }
