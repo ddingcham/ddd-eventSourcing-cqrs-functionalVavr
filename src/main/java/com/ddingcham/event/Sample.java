@@ -33,20 +33,14 @@ public class Sample {
     @StreamListener(Sink.INPUT)
     public void commandStream(Command command) {
 
-        final String resolvedCommandType;
-
         log.info("Received command {}", command);
 
         if (command instanceof MarkPaymentTimeout) {
-            resolvedCommandType = "MarkPaymentTimeout";
+            shopItems.markPaymentTimeout((MarkPaymentTimeout) command);
         } else if (command instanceof Order) {
-            resolvedCommandType = "Order";
+            shopItems.order((Order) command);
         } else if (command instanceof Pay) {
-            resolvedCommandType = "Pay";
-        } else {
-            resolvedCommandType = "";
+            shopItems.pay((Pay) command);
         }
-
-        log.info("Resolved Command Type : {}", resolvedCommandType);
     }
 }

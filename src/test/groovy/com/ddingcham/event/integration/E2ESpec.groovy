@@ -86,10 +86,10 @@ class E2ESpec extends IntegrationSpec {
     }
 
     private static String samplePayInJson(UUID uuid) {
-        return "{\"type\":\"item.pay\",\"uuid\":\"$uuid\",\"when\":\"2016-10-06T10:29:23.956Z\"}"
+        return "{\"type\":\"item.pay\",\"uuid\":\"$uuid\",\"when\":\"2019-02-28T10:28:25.956Z\"}"
     }
 
     private static String sampleMarkTimeoutInJson(UUID uuid) {
-        return "{\"type\":\"item.markPaymentTimeout\",\"uuid\":\"$uuid\",\"when\":\"2016-10-06T10:29:23.956Z\"}"
+        return "{\"type\":\"item.markPaymentTimeout\",\"uuid\":\"$uuid\",\"when\":\"2019-02-28T10:28:27.956Z\"}"
     }
 }
